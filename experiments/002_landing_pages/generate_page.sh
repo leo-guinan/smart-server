@@ -99,14 +99,11 @@ cat >> "${OUTPUT_DIR}/index.html" << 'HTMLEND'
     
     // Track experiment start
     if (window.fathom) {
-      fathom.trackGoal('PAGE_LOAD', 0);
-      fathom.trackEvent('experiment_config', {
-        _value: JSON.stringify(COMPONENTS),
-        _session: SESSION_ID
-      });
+      fathom.trackEvent('page_load');
+      console.log('Tracked: page_load');
     }
     
-    // Scroll tracking
+    // Scroll tracking with debounce
     let scrollEvents = {
       scroll_25: false,
       scroll_50: false,
@@ -114,25 +111,42 @@ cat >> "${OUTPUT_DIR}/index.html" << 'HTMLEND'
       scroll_90: false
     };
     
+    let scrollTimeout;
     window.addEventListener('scroll', () => {
-      const scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-      
-      if (scrollPct > 0.25 && !scrollEvents.scroll_25) {
-        scrollEvents.scroll_25 = true;
-        if (window.fathom) fathom.trackGoal('SCROLL_25', 0);
-      }
-      if (scrollPct > 0.5 && !scrollEvents.scroll_50) {
-        scrollEvents.scroll_50 = true;
-        if (window.fathom) fathom.trackGoal('SCROLL_50', 0);
-      }
-      if (scrollPct > 0.75 && !scrollEvents.scroll_75) {
-        scrollEvents.scroll_75 = true;
-        if (window.fathom) fathom.trackGoal('SCROLL_75', 0);
-      }
-      if (scrollPct > 0.9 && !scrollEvents.scroll_90) {
-        scrollEvents.scroll_90 = true;
-        if (window.fathom) fathom.trackGoal('SCROLL_90', 0);
-      }
+      // Debounce scroll events
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        
+        if (scrollPct >= 0.25 && !scrollEvents.scroll_25) {
+          scrollEvents.scroll_25 = true;
+          if (window.fathom) {
+            fathom.trackEvent('scroll_25');
+            console.log('Tracked: scroll_25', scrollPct);
+          }
+        }
+        if (scrollPct >= 0.5 && !scrollEvents.scroll_50) {
+          scrollEvents.scroll_50 = true;
+          if (window.fathom) {
+            fathom.trackEvent('scroll_50');
+            console.log('Tracked: scroll_50', scrollPct);
+          }
+        }
+        if (scrollPct >= 0.75 && !scrollEvents.scroll_75) {
+          scrollEvents.scroll_75 = true;
+          if (window.fathom) {
+            fathom.trackEvent('scroll_75');
+            console.log('Tracked: scroll_75', scrollPct);
+          }
+        }
+        if (scrollPct >= 0.9 && !scrollEvents.scroll_90) {
+          scrollEvents.scroll_90 = true;
+          if (window.fathom) {
+            fathom.trackEvent('scroll_90');
+            console.log('Tracked: scroll_90', scrollPct);
+          }
+        }
+      }, 100);
     });
     
     // CTA click tracking
