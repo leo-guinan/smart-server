@@ -152,16 +152,11 @@ cat >> "${OUTPUT_DIR}/index.html" << 'HTMLEND'
     // CTA click tracking
     document.querySelectorAll('[data-event="cta_click"]').forEach(button => {
       button.addEventListener('click', (e) => {
-        const offer = e.target.dataset.offer;
         if (window.fathom) {
-          fathom.trackGoal('CTA_CLICK', 49); // $49 value
-          fathom.trackEvent('cta_click', {
-            _value: offer,
-            _session: SESSION_ID
-          });
+          fathom.trackEvent('cta_click', {_value: 49});
+          console.log('Tracked: cta_click with $49 value');
         }
-        // Redirect to checkout
-        window.location.href = `/checkout/${offer}`;
+        // Link will handle redirect to Stripe
       });
     });
     
