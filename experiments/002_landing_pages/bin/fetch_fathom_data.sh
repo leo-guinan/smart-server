@@ -27,14 +27,18 @@ echo ""
 
 # Fetch pageviews
 echo ">> Fetching pageviews..."
-curl -s -X GET "${FATHOM_API_URL}/aggregations" \
-  -H "Authorization: Bearer ${FATHOM_API_KEY}" \
-  -d "entity=pageview" \
-  -d "entity_id=${FATHOM_SITE_ID}" \
-  -d "aggregates=visits,uniques,pageviews" \
-  -d "date_from=${START_DATE}" \
-  -d "date_to=${END_DATE}" \
-  | jq '.' > "${FATHOM_DATA_DIR}/pageviews.json"
+RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=pageview&entity_id=${FATHOM_SITE_ID}&aggregates=visits,uniques,pageviews&date_from=${START_DATE}&date_to=${END_DATE}" \
+  -H "Authorization: Bearer ${FATHOM_API_KEY}")
+
+# Check if response is valid JSON
+if echo "$RESPONSE" | jq empty 2>/dev/null; then
+  echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/pageviews.json"
+else
+  echo "Error: Invalid response from Fathom API" >&2
+  echo "Response: $RESPONSE" >&2
+  echo "Check your FATHOM_API_KEY and site ID" >&2
+  exit 1
+fi
 
 # Fetch events
 echo ">> Fetching events..."
@@ -53,15 +57,15 @@ done
 
 # Fetch event values (for cta_click with $49)
 echo ">> Fetching event values..."
-curl -s -X GET "${FATHOM_API_URL}/aggregations" \
-  -H "Authorization: Bearer ${FATHOM_API_KEY}" \
-  -d "entity=event" \
-  -d "entity_id=cta_click" \
-  -d "aggregates=sum" \
-  -d "date_from=${START_DATE}" \
-  -d "date_to=${END_DATE}" \
-  -d "site_id=${FATHOM_SITE_ID}" \
-  | jq '.' > "${FATHOM_DATA_DIR}/event_cta_value.json"
+RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=event&entity_id=cta_click&aggregates=sum&date_from=${START_DATE}&date_to=${END_DATE}&site_id=${FATHOM_SITE_ID}" \
+  -H "Authorization: Bearer ${FATHOM_API_KEY}")
+
+if echo "$RESPONSE" | jq empty 2>/dev/null; then
+  echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/event_cta_value.json"
+else
+  echo "Warning: Failed to fetch CTA value, using zero" >&2
+  echo '{"data":[{"sum":0}]}' > "${FATHOM_DATA_DIR}/event_cta_value.json"
+fi
 
 echo ""
 echo "✓ Fathom data fetched successfully"
