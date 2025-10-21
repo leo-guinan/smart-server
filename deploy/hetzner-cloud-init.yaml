@@ -30,7 +30,7 @@ write_files:
 
 runcmd:
   # Clone the smart server repository
-  - git clone https://github.com/YOUR_USERNAME/smart_server.git /opt/smart-repo
+  - git clone https://github.com/leo-guinan/smart-server.git /opt/smart-repo
   
   # Run installation script
   - cd /opt/smart-repo && bash deploy/install.sh
