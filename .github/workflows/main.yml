@@ -1,0 +1,14 @@
+name: AI Code Analysis
+
+on: [push, pull_request]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Analyze with Consciousness Lab
+        uses: idea-nexus-ventures/analyze-action@v1
+        with:
+          openrouter_key: ${{ secrets.OPENROUTER_API_KEY }}
