@@ -29,7 +29,8 @@ if [ ! -f "$STATS_FILE" ]; then
 fi
 
 # Get total visitors
-TOTAL_VISITORS=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/pageviews.json")
+# Fathom returns array directly, not {data: [...]}
+TOTAL_VISITORS=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/pageviews.json")
 
 if [ "$TOTAL_VISITORS" -lt "$MIN_SESSIONS_FOR_ANALYSIS" ]; then
   echo "Not enough data yet (need ${MIN_SESSIONS_FOR_ANALYSIS}, have ${TOTAL_VISITORS})"
@@ -41,12 +42,13 @@ echo "Analyzing ${TOTAL_VISITORS} visitors..."
 echo ""
 
 # Calculate funnel conversion rates
-PAGE_LOADS=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/event_page_load.json")
-SCROLL_25=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_25.json")
-SCROLL_50=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_50.json")
-SCROLL_75=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_75.json")
-SCROLL_90=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_90.json")
-CTA_CLICKS=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/event_cta_click.json")
+# Fathom returns array directly, not {data: [...]}
+PAGE_LOADS=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/event_page_load.json")
+SCROLL_25=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_25.json")
+SCROLL_50=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_50.json")
+SCROLL_75=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_75.json")
+SCROLL_90=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/event_scroll_90.json")
+CTA_CLICKS=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/event_cta_click.json")
 
 echo "Funnel Analysis:"
 echo "  Visitors:     ${TOTAL_VISITORS}"
@@ -106,7 +108,7 @@ else
 fi
 
 # Calculate revenue
-CTA_VALUE=$(jq -r '.data[0].sum // 0' "${FATHOM_DATA_DIR}/event_cta_value.json")
+CTA_VALUE=$(jq -r '.[0].sum // 0' "${FATHOM_DATA_DIR}/event_cta_value.json")
 echo "Total Revenue: \$${CTA_VALUE}"
 echo ""
 

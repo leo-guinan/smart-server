@@ -27,11 +27,17 @@ echo ""
 
 # Fetch pageviews
 echo ">> Fetching pageviews..."
-RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=pageview&entity_id=${FATHOM_SITE_ID}&aggregates=visits,uniques,pageviews&date_from=${START_DATE}&date_to=${END_DATE}" \
+RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=pageview&entity_id=${FATHOM_SITE_ID}&aggregates=pageviews,uniques&date_from=${START_DATE}&date_to=${END_DATE}" \
   -H "Authorization: Bearer ${FATHOM_API_KEY}")
 
 # Check if response is valid JSON
 if echo "$RESPONSE" | jq empty 2>/dev/null; then
+  # Check for errors in response
+  if echo "$RESPONSE" | jq -e '.errors' >/dev/null 2>&1; then
+    echo "Error from Fathom API:" >&2
+    echo "$RESPONSE" | jq '.errors' >&2
+    exit 1
+  fi
   echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/pageviews.json"
 else
   echo "Error: Invalid response from Fathom API" >&2
@@ -44,14 +50,20 @@ fi
 echo ">> Fetching events..."
 for event in page_load scroll_25 scroll_50 scroll_75 scroll_90 cta_click; do
   echo "   - ${event}"
-  RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=event&entity_id=${event}&aggregates=visits,uniques&date_from=${START_DATE}&date_to=${END_DATE}&site_id=${FATHOM_SITE_ID}" \
+  RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=event&entity_id=${event}&aggregates=uniques&date_from=${START_DATE}&date_to=${END_DATE}&site_id=${FATHOM_SITE_ID}" \
     -H "Authorization: Bearer ${FATHOM_API_KEY}")
   
   if echo "$RESPONSE" | jq empty 2>/dev/null; then
-    echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/event_${event}.json"
+    # Check for errors
+    if echo "$RESPONSE" | jq -e '.errors' >/dev/null 2>&1; then
+      echo "   Warning: API error for ${event}, using zero data" >&2
+      echo '[{"uniques":0}]' > "${FATHOM_DATA_DIR}/event_${event}.json"
+    else
+      echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/event_${event}.json"
+    fi
   else
-    echo "Warning: Failed to fetch ${event}, using zero data" >&2
-    echo '{"data":[{"uniques":0,"visits":0}]}' > "${FATHOM_DATA_DIR}/event_${event}.json"
+    echo "   Warning: Invalid JSON for ${event}, using zero data" >&2
+    echo '[{"uniques":0}]' > "${FATHOM_DATA_DIR}/event_${event}.json"
   fi
 done
 
@@ -61,10 +73,16 @@ RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=event&entity_id
   -H "Authorization: Bearer ${FATHOM_API_KEY}")
 
 if echo "$RESPONSE" | jq empty 2>/dev/null; then
-  echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/event_cta_value.json"
+  # Check for errors
+  if echo "$RESPONSE" | jq -e '.errors' >/dev/null 2>&1; then
+    echo "Warning: API error for CTA value, using zero" >&2
+    echo '[{"sum":0}]' > "${FATHOM_DATA_DIR}/event_cta_value.json"
+  else
+    echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/event_cta_value.json"
+  fi
 else
-  echo "Warning: Failed to fetch CTA value, using zero" >&2
-  echo '{"data":[{"sum":0}]}' > "${FATHOM_DATA_DIR}/event_cta_value.json"
+  echo "Warning: Invalid JSON for CTA value, using zero" >&2
+  echo '[{"sum":0}]' > "${FATHOM_DATA_DIR}/event_cta_value.json"
 fi
 
 echo ""
@@ -74,15 +92,16 @@ echo ""
 
 # Generate summary
 echo "Summary:"
-PAGEVIEWS=$(jq -r '.data[0].pageviews // 0' "${FATHOM_DATA_DIR}/pageviews.json")
-VISITORS=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/pageviews.json")
+# Fathom returns array directly, not {data: [...]}
+PAGEVIEWS=$(jq -r '.[0].pageviews // 0' "${FATHOM_DATA_DIR}/pageviews.json")
+VISITORS=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/pageviews.json")
 echo "  Total pageviews: ${PAGEVIEWS}"
 echo "  Unique visitors: ${VISITORS}"
 echo ""
 
 echo "Event conversions:"
 for event in page_load scroll_25 scroll_50 scroll_75 scroll_90 cta_click; do
-  COUNT=$(jq -r '.data[0].uniques // 0' "${FATHOM_DATA_DIR}/event_${event}.json")
+  COUNT=$(jq -r '.[0].uniques // 0' "${FATHOM_DATA_DIR}/event_${event}.json")
   if [ "$VISITORS" -gt 0 ]; then
     PCT=$(awk -v c="$COUNT" -v v="$VISITORS" 'BEGIN{printf "%.1f", (c/v)*100}')
     echo "  ${event}: ${COUNT} (${PCT}%)"
@@ -91,7 +110,7 @@ for event in page_load scroll_25 scroll_50 scroll_75 scroll_90 cta_click; do
   fi
 done
 
-CTA_VALUE=$(jq -r '.data[0].sum // 0' "${FATHOM_DATA_DIR}/event_cta_value.json")
+CTA_VALUE=$(jq -r '.[0].sum // 0' "${FATHOM_DATA_DIR}/event_cta_value.json")
 echo ""
 echo "  CTA value: \$${CTA_VALUE}"
 
