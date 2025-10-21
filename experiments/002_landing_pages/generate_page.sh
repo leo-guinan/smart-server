@@ -28,11 +28,12 @@ select_component() {
   # Random number between 0 and 1
   local rand=$(awk 'BEGIN{srand(); print rand()}')
   
-  if awk -v r="$rand" -v e="$epsilon" 'BEGIN{exit !(r < e)}'; then
+  if [ $((RANDOM % 100)) -lt 20 ]; then
     # Explore: random selection
-    jq -r --arg stage "$stage" \
-      '.components[$stage] | .[floor(now * 1000 % length)] | .id' \
-      "$STATS_FILE"
+    local count=$(jq -r --arg stage "$stage" '.components[$stage] | length' "$STATS_FILE")
+    local idx=$((RANDOM % count))
+    jq -r --arg stage "$stage" --argjson idx "$idx" \
+      '.components[$stage][$idx] | .id' "$STATS_FILE"
   else
     # Exploit: best performing
     jq -r --arg stage "$stage" \

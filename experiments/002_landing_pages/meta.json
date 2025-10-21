@@ -4,7 +4,7 @@
   "type": "landing_page",
   "goal": "payment_success",
   "target_conversion_rate": 0.02,
-  "fathom_site_id": "REPLACE_WITH_YOUR_FATHOM_SITE_ID",
+  "fathom_site_id": "UQBOCDXH",
   "components": [
     {
       "stage": "hero",
