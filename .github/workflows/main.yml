@@ -9,6 +9,6 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Analyze with Consciousness Lab
-        uses: idea-nexus-ventures/analyze-action@v1.0.1
+        uses: idea-nexus-ventures/analyze-action@v1
         with:
           openrouter_key: ${{ secrets.OPENROUTER_API_KEY }}
