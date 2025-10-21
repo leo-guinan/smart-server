@@ -1,0 +1,26 @@
+{
+  "id": "001_nginx_workers",
+  "description": "Tune nginx worker_processes for optimal performance",
+  "variants": [
+    {
+      "name": "baseline",
+      "apply": "true"
+    },
+    {
+      "name": "workers_auto",
+      "apply": "sudo sed -i.bak 's/^worker_processes.*/worker_processes auto;/' /etc/nginx/nginx.conf && sudo systemctl reload nginx"
+    },
+    {
+      "name": "workers_2",
+      "apply": "sudo sed -i.bak 's/^worker_processes.*/worker_processes 2;/' /etc/nginx/nginx.conf && sudo systemctl reload nginx"
+    },
+    {
+      "name": "workers_4",
+      "apply": "sudo sed -i.bak 's/^worker_processes.*/worker_processes 4;/' /etc/nginx/nginx.conf && sudo systemctl reload nginx"
+    }
+  ],
+  "revert": "sudo sed -i.bak 's/^worker_processes.*/worker_processes 1;/' /etc/nginx/nginx.conf && sudo systemctl reload nginx",
+  "target_url": "http://127.0.0.1/",
+  "measure_interval_sec": 5
+}
+

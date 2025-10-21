@@ -1,0 +1,57 @@
+#cloud-config
+# Hetzner Cloud-Init configuration for Smart Server
+# 
+# Usage: When creating a Hetzner Cloud server, paste this as "User Data"
+# or use it with the Hetzner CLI/API
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - jq
+  - curl
+  - nginx
+  - git
+
+users:
+  - name: smart
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: [sudo, www-data]
+
+write_files:
+  - path: /etc/sudoers.d/smart-server
+    content: |
+      # Allow smart user to manage nginx without password
+      smart ALL=(ALL) NOPASSWD: /usr/sbin/nginx -t
+      smart ALL=(ALL) NOPASSWD: /bin/systemctl reload nginx
+      smart ALL=(ALL) NOPASSWD: /bin/sed -i* * /etc/nginx/nginx.conf
+    permissions: '0440'
+
+runcmd:
+  # Clone the smart server repository
+  - git clone https://github.com/YOUR_USERNAME/smart_server.git /opt/smart-repo
+  
+  # Run installation script
+  - cd /opt/smart-repo && bash deploy/install.sh
+  
+  # Set up firewall
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw --force enable
+  
+  # Optional: Set up SSH key-based auth only
+  # - sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+  # - systemctl restart ssh
+
+final_message: |
+  Smart Server is ready!
+  Dashboard available at: http://$HOSTNAME
+  
+  To run an experiment manually:
+    sudo -u smart /opt/smart/bin/agent.sh
+  
+  To view logs:
+    tail -f /opt/smart/var/experiment.log
+

@@ -1,0 +1,26 @@
+{
+  "name": "smart-server",
+  "version": "1.0.0",
+  "description": "Self-adapting experiment server that runs automated performance tests and optimizes itself",
+  "scripts": {
+    "validate": "bash scripts/validate.sh",
+    "test": "bash scripts/test-local.sh",
+    "deploy:check": "bash scripts/validate.sh && echo 'Ready to deploy!'"
+  },
+  "keywords": [
+    "experiments",
+    "automation",
+    "self-adapting",
+    "performance",
+    "optimization",
+    "nginx",
+    "shell"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/smart_server"
+  }
+}
+

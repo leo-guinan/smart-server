@@ -1,0 +1,28 @@
+# Smart Server gitignore
+
+# Runtime data
+var/
+*.log
+*.csv
+
+# State files
+state.json
+
+# Nginx backup files
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+
