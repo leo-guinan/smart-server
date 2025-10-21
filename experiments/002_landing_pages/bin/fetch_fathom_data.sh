@@ -44,15 +44,15 @@ fi
 echo ">> Fetching events..."
 for event in page_load scroll_25 scroll_50 scroll_75 scroll_90 cta_click; do
   echo "   - ${event}"
-  curl -s -X GET "${FATHOM_API_URL}/aggregations" \
-    -H "Authorization: Bearer ${FATHOM_API_KEY}" \
-    -d "entity=event" \
-    -d "entity_id=${event}" \
-    -d "aggregates=visits,uniques" \
-    -d "date_from=${START_DATE}" \
-    -d "date_to=${END_DATE}" \
-    -d "site_id=${FATHOM_SITE_ID}" \
-    | jq '.' > "${FATHOM_DATA_DIR}/event_${event}.json"
+  RESPONSE=$(curl -s -X GET "${FATHOM_API_URL}/aggregations?entity=event&entity_id=${event}&aggregates=visits,uniques&date_from=${START_DATE}&date_to=${END_DATE}&site_id=${FATHOM_SITE_ID}" \
+    -H "Authorization: Bearer ${FATHOM_API_KEY}")
+  
+  if echo "$RESPONSE" | jq empty 2>/dev/null; then
+    echo "$RESPONSE" | jq '.' > "${FATHOM_DATA_DIR}/event_${event}.json"
+  else
+    echo "Warning: Failed to fetch ${event}, using zero data" >&2
+    echo '{"data":[{"uniques":0,"visits":0}]}' > "${FATHOM_DATA_DIR}/event_${event}.json"
+  fi
 done
 
 # Fetch event values (for cta_click with $49)
