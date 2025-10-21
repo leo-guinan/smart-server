@@ -17,4 +17,4 @@ jobs:
         uses: idea-nexus-ventures/analyze-action@v1
         with:
           openrouter_key: ${{ secrets.OPENROUTER_API_KEY }}
-          model: "meta-llama/llama-4-scout:free"
+          model: "openai/gpt-5-nano"
