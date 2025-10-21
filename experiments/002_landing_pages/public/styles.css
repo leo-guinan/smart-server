@@ -431,6 +431,8 @@ body {
   cursor: pointer;
   transition: background 0.2s;
   margin: 32px 0;
+  text-align: center;
+  text-decoration: none;
 }
 
 .cta-button:hover {
