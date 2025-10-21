@@ -1,0 +1,54 @@
+{
+  "id": "002_landing_pages",
+  "description": "Self-optimizing landing page with component-level A/B testing",
+  "type": "landing_page",
+  "goal": "payment_success",
+  "target_conversion_rate": 0.02,
+  "fathom_site_id": "REPLACE_WITH_YOUR_FATHOM_SITE_ID",
+  "components": [
+    {
+      "stage": "hero",
+      "sequence": 1,
+      "required": true,
+      "success_metric": "scroll_25",
+      "min_conversion_rate": 0.8
+    },
+    {
+      "stage": "problem",
+      "sequence": 2,
+      "required": true,
+      "success_metric": "scroll_50",
+      "min_conversion_rate": 0.7
+    },
+    {
+      "stage": "solution",
+      "sequence": 3,
+      "required": true,
+      "success_metric": "scroll_75",
+      "min_conversion_rate": 0.6
+    },
+    {
+      "stage": "proof",
+      "sequence": 4,
+      "required": true,
+      "success_metric": "scroll_90",
+      "min_conversion_rate": 0.5
+    },
+    {
+      "stage": "cta",
+      "sequence": 5,
+      "required": true,
+      "success_metric": "cta_click",
+      "min_conversion_rate": 0.15
+    }
+  ],
+  "offers": [
+    {
+      "id": "time_audit",
+      "name": "Time Audit",
+      "price": 49,
+      "checkout_url": "/checkout/time-audit"
+    }
+  ]
+}
+

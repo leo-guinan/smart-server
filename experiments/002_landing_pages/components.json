@@ -1,0 +1,125 @@
+{
+  "components": {
+    "hero": [
+      {
+        "id": "hero_automation_waste",
+        "name": "Automation Waste Hook",
+        "html": "templates/hero/automation_waste.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_25": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      },
+      {
+        "id": "hero_time_leaking",
+        "name": "Time Leaking Hook",
+        "html": "templates/hero/time_leaking.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_25": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      }
+    ],
+    "problem": [
+      {
+        "id": "problem_automation_fallacy",
+        "name": "Automation Fallacy",
+        "html": "templates/problem/automation_fallacy.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_50": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      },
+      {
+        "id": "problem_broken_workflows",
+        "name": "Broken Workflows",
+        "html": "templates/problem/broken_workflows.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_50": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      }
+    ],
+    "solution": [
+      {
+        "id": "solution_measurement",
+        "name": "Measurement is the Other Half",
+        "html": "templates/solution/measurement.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_75": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      },
+      {
+        "id": "solution_time_insurance",
+        "name": "Time Insurance Concept",
+        "html": "templates/solution/time_insurance.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_75": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      }
+    ],
+    "proof": [
+      {
+        "id": "proof_case_studies",
+        "name": "Client Case Studies",
+        "html": "templates/proof/case_studies.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_90": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      },
+      {
+        "id": "proof_compound_savings",
+        "name": "Compounding Savings Graph",
+        "html": "templates/proof/compound_savings.html",
+        "stats": {
+          "impressions": 0,
+          "scroll_90": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      }
+    ],
+    "cta": [
+      {
+        "id": "cta_audit",
+        "name": "Time Audit CTA",
+        "html": "templates/cta/time_audit.html",
+        "stats": {
+          "impressions": 0,
+          "cta_click": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      },
+      {
+        "id": "cta_guarantee",
+        "name": "Money-Back Guarantee CTA",
+        "html": "templates/cta/guarantee.html",
+        "stats": {
+          "impressions": 0,
+          "cta_click": 0,
+          "conversion_rate": 0.0,
+          "avg_dwell_ms": 0
+        }
+      }
+    ]
+  }
+}
+
