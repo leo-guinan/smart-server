@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} 
       - name: Analyze with Consciousness Lab
         uses: idea-nexus-ventures/analyze-action@v1
         with:
