@@ -10,6 +10,7 @@ A self-adapting experiment server that runs automated performance tests, makes d
 - **Hosts its own dashboard** showing experiment results in real-time
 - **Phones home** (optionally) to request coaching when uncertain
 - **Zero heavy dependencies** - just bash, jq, curl, and your web server
+- **Automatically documented by Consciousness Lab agents
 
 ## Architecture
 
